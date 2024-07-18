@@ -1,0 +1,131 @@
+
+
+
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.header-img{
+    height: 200px;
+    width: 200px;
+    object-fit: cover;  
+}
+
+.header-name {
+    /* margin: 10px; */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* overflow: hidden; */
+}
+
+#chat-box {
+    padding: 20px;
+    height: 400px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ddd;
+    margin-top: -50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.input-container {
+    display: flex;
+    padding: 10px;
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#send-btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ffffff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#send-btn:hover {
+    background-color: #ffffff;
+}
+
+.message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message.user {
+    width: auto;
+    white-space: break-spaces;
+    padding: 010px;
+    background: #004CC6;
+    color: white;
+    text-align: right;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: sans-serif;
+    height: auto;
+    float:right;
+}
+
+
+
+.message.bot {
+    padding: 15px;
+    background-color: #f1f1f1;
+    color: black;
+    text-align: left;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: sans-serif;
+    clear: both;
+    font-weight: 400;
+}
+
+.options-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.option-card {
+    color: #000000;
+    border: 2px solid #878787;
+    background-color: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+    /* border-radius: 20px; */
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.option-card:hover{
+    background-color: #878787;
+    color: #ffffff;
+    border: 2px solid #fff;
+}

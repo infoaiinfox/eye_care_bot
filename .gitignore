@@ -1,0 +1,16 @@
+# Ignore the virtual environment directory
+venv/
+eyecare/
+
+
+# Ignore log files
+*.log
+
+# Ignore compiled Python files
+*.pyc
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+
+.DS_Store

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=1">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel='icon' href='/static/send_1010434.png' />
+  <style>
+    #header {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    background: rgb(245, 148, 148);
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    border-radius: 10px;
+    }
+#header h2 {
+    margin: 3px;
+    font-size: 20px;
+    color: #000000;
+    font-weight: 500;
+  }
+    .online-dot {
+        width: 10px;
+        height: 10px;
+        background-color: rgb(0, 128, 53);
+        border: 2px solid white;
+        border-radius: 50%;
+        margin-right: 8px;
+
+    }
+    #send-btn {
+        background: none; /* Remove background color */
+        border: none; /* Remove border */
+        padding: 0; /* Remove padding */
+        width: 40px; /* Adjust width as needed */
+        height: 40px; /* Adjust height as needed */
+    }
+    #send-btn img {
+        width: 2rem; /* Ensure the image takes up the entire button */
+        height: 2rem; /* Ensure the image takes up the entire button */
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</head>
+<body>
+  <div id="container">
+    <div class="container">
+      <div id="header">
+          <img class="header-img" src="static\Untitled.png" style="width: 80px;height: 80px;"/>
+          <div class="header-name">
+              <h2>Rachel</h2>
+              <div class="online-dot"></div>
+          </div>
+      </div>
+  
+  <div class="container">
+      <div id="chat-box"></div>
+      <div class="input-container">
+          <input type="text" id="user-input" placeholder="Type your message here...">
+          <button id="send-btn"><img src="static/send_1010434.png" alt="Send"></button>
+      </div>
+  </div>
+
+  <script>
+      const chatBox = document.getElementById('chat-box');
+      const userInput = document.getElementById('user-input');
+      const sendBtn = document.getElementById('send-btn');
+
+      sendBtn?.addEventListener('click', () => {
+          const message = userInput.value;
+          if (message.trim() !== '') {
+              appendMessage('user', message);
+              // fetchResponse(message);
+              fetchInformationBasic({message: message});
+              userInput.value = '';
+          }
+      });
+
+      userInput?.addEventListener('keypress', (event) => {
+          if (event.key === 'Enter') {
+              sendBtn.click();
+          }
+      });
+
+      function appendMessage(sender, message) {
+          const messageDiv = document.createElement('div');
+          messageDiv.classList.add('message', sender);
+          messageDiv.textContent = message;
+          chatBox.appendChild(messageDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+      }
+      
+    function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+    }
+    
+    function getSessionId() {
+      // Check if session_id already exists in local storage
+      let sessionId = localStorage.getItem('session_id');
+      if (!sessionId) {
+          // Generate a new session ID and store it in local storage
+          sessionId = generateRandomString(8);
+          localStorage.setItem('session_id', sessionId);
+      }
+      return sessionId;
+    }
+
+function fetchResponse(message) {
+  alert('Check method fetchResponse');
+  fetch('/get_response', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          message: message,
+          session_id: getSessionId()  // Reuse or generate session_id
+      })
+  })
+  .then(response => response && response.json())
+  .then(data => {
+    if(data) {
+      appendMessage('bot', data.response.split('Options:')[0]);
+      if (data.response.includes('Options:')) {
+          showOptions(data.response);
+      }
+      if (data.state === 'choose_from_date' || data.state === 'choose_to_date') {
+          showDatePicker();
+      }
+    }
+  });
+}
+
+function fetchInformationBasic(message) {
+  // event.preventDefault();
+
+        // var formData = new FormData(userInput.value);
+        // var jsonData = {};
+
+        // for (var [key, value] of formData) {
+        //   jsonData[key] = value;
+        // }
+
+        var xhr = new XMLHttpRequest();
+        // Check which button triggered the form submission
+        xhr.open("POST", "/api/gpt2-chatbot"); 
+
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              responseBox.textContent = "";
+              responseBox.textContent = xhr.responseText;
+            } else {
+              console.error(xhr.status + " " + xhr.statusText);
+            }
+          }
+        };
+        xhr.send(JSON.stringify({message: message}));
+}
+
+      function showOptions(response) {
+          const optionsText = response.split('Options: ')[1];
+          const options = optionsText.split(', ');
+          const optionsContainer = document.createElement('div');
+          optionsContainer.classList.add('options-container');
+          options.forEach(option => {
+              const optionCard = document.createElement('div');
+              optionCard.classList.add('option-card');
+              optionCard.textContent = option.trim();
+              optionCard.addEventListener('click', () => {
+                  appendMessage('user', option.trim());
+                  fetchResponse(option.trim());
+              });
+              optionsContainer.appendChild(optionCard);
+          });
+          chatBox.appendChild(optionsContainer);
+          chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function showDatePicker() {
+          $(userInput).datepicker({
+              dateFormat: 'yy-mm-dd',
+              onSelect: function(dateText) {
+                  appendMessage('user', dateText);
+                  fetchResponse(dateText);
+                  $(userInput).datepicker('destroy');
+                  userInput.placeholder = "Type your message here...";
+                  userInput.value = '';
+              }
+          }).datepicker('show');
+          userInput.placeholder = "Select a date...";
+      }
+
+      // Initial bot greeting
+      // fetchResponse('');
+      fetchInformationBasic('Hello How are you?');
+  </script>
+</body>
+</html>
